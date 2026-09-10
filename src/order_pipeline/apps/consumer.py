@@ -46,7 +46,7 @@ from order_pipeline.errors import (
     ProcessingError,
     RetryExhaustedError,
 )
-from order_pipeline.logging_config import configure_logging
+from order_pipeline.logging_config import KAFKA_CLIENT_LOGGER, configure_logging
 from order_pipeline.models import Order
 from order_pipeline.processing import FlakyDownstream, OrderProcessor
 from order_pipeline.retry import RetryPolicy
@@ -75,6 +75,17 @@ class ConsumerCounters:
     dead_lettered: int = 0
 
 
+def _describe(partitions: list[TopicPartition]) -> str:
+    """Render a partition list as ``topic[0], topic[1]``.
+
+    TopicPartition's own repr is built by librdkafka with C format specifiers
+    that Windows does not expand, so it prints literally as
+    ``partition=%I32d,offset=%s``. Formatting the fields here keeps the
+    rebalance log readable on every platform.
+    """
+    return ", ".join(f"{tp.topic}[{tp.partition}]" for tp in partitions) or "none"
+
+
 def build_consumer(kafka: KafkaSettings, settings: ConsumerSettings) -> Consumer:
     """Create the consumer with manual offset *storing*.
 
@@ -96,7 +107,8 @@ def build_consumer(kafka: KafkaSettings, settings: ConsumerSettings) -> Consumer
             "session.timeout.ms": 45_000,
             "max.poll.interval.ms": 300_000,
             "partition.assignment.strategy": "cooperative-sticky",
-        }
+        },
+        logger=logging.getLogger(KAFKA_CLIENT_LOGGER),
     )
 
 
@@ -110,7 +122,8 @@ def build_side_producer(kafka: KafkaSettings) -> Producer:
             "enable.idempotence": True,
             "retries": 5,
             "delivery.timeout.ms": 60_000,
-        }
+        },
+        logger=logging.getLogger(KAFKA_CLIENT_LOGGER),
     )
 
 
@@ -343,10 +356,10 @@ class OrderConsumerApp:
         logger.warning("recoverable consumer error: %s", error)
 
     def _on_assign(self, _consumer: Consumer, partitions: list[TopicPartition]) -> None:
-        logger.info("assigned %d partition(s): %s", len(partitions), partitions)
+        logger.info("assigned %d partition(s): %s", len(partitions), _describe(partitions))
 
     def _on_revoke(self, _consumer: Consumer, partitions: list[TopicPartition]) -> None:
-        logger.info("revoking %d partition(s)", len(partitions))
+        logger.info("revoking %d partition(s): %s", len(partitions), _describe(partitions))
 
     def _close(self) -> None:
         """Emit a final snapshot, flush the egress producer, commit and leave."""

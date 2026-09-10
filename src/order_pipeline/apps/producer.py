@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from confluent_kafka import KafkaError, KafkaException, Message, Producer
 
 from order_pipeline.config import AppSettings, KafkaSettings, ProducerSettings
-from order_pipeline.logging_config import configure_logging
+from order_pipeline.logging_config import KAFKA_CLIENT_LOGGER, configure_logging
 from order_pipeline.models import Order
 from order_pipeline.serdes import (
     MessageField,
@@ -128,7 +128,8 @@ def build_producer(settings: KafkaSettings) -> Producer:
             "retries": 5,
             "retry.backoff.ms": 200,
             "delivery.timeout.ms": 120_000,
-        }
+        },
+        logger=logging.getLogger(KAFKA_CLIENT_LOGGER),
     )
 
 

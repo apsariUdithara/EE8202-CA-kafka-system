@@ -25,7 +25,7 @@ from order_pipeline.dlq import (
     HEADER_REASON,
     normalize_headers,
 )
-from order_pipeline.logging_config import configure_logging
+from order_pipeline.logging_config import KAFKA_CLIENT_LOGGER, configure_logging
 from order_pipeline.serdes import (
     MessageField,
     SerializationContext,
@@ -88,7 +88,8 @@ def run(kafka: KafkaSettings, args: argparse.Namespace, shutdown: ShutdownSignal
             # Read-only tool: never move the real consumer's offsets.
             "enable.auto.commit": False,
             "enable.partition.eof": True,
-        }
+        },
+        logger=logging.getLogger(KAFKA_CLIENT_LOGGER),
     )
     deserializer = raw_avro_deserializer(build_schema_registry_client(kafka))
     reasons: Counter[str] = Counter()
