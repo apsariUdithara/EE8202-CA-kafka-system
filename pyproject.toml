@@ -1,0 +1,100 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ee8202-order-pipeline"
+version = "1.0.0"
+description = "Kafka + Avro order pipeline with real-time aggregation, retries and a dead letter queue (EE8202 continuous assessment)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Apsari Udithara" }]
+keywords = ["kafka", "avro", "schema-registry", "dead-letter-queue", "streaming"]
+
+dependencies = [
+    "confluent-kafka[avro,schemaregistry]>=2.5,<3",
+    "fastavro>=1.9",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+order-producer = "order_pipeline.apps.producer:main"
+order-consumer = "order_pipeline.apps.consumer:main"
+order-dlq = "order_pipeline.apps.dlq_inspector:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/order_pipeline"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"schemas" = "order_pipeline/_schemas"
+
+# --------------------------------------------------------------------------
+# Tooling
+# --------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "integration: requires a running Kafka + Schema Registry (deselect with '-m \"not integration\"')",
+]
+
+[tool.coverage.run]
+source = ["src/order_pipeline"]
+branch = true
+omit = ["*/apps/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # flake8-bugbear
+    "C4",       # comprehensions
+    "SIM",      # simplify
+    "RET",      # return
+    "ARG",      # unused arguments
+    "BLE",      # blind except
+    "SLF",      # private member access
+    "PTH",      # use pathlib
+    "RUF",      # ruff-specific
+]
+ignore = [
+    "E501",  # line length is handled by the formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["ARG001", "ARG002"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["order_pipeline"]
+mypy_path = "src"
+strict = true
+warn_unreachable = true
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["confluent_kafka.*"]
+ignore_missing_imports = true
