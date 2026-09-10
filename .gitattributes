@@ -1,0 +1,22 @@
+# Normalise line endings in the repository so that a checkout on Windows
+# cannot produce files that break inside the Linux containers.
+* text=auto eol=lf
+
+# Executed inside a container: a CR would reach the interpreter and fail with
+# an unhelpful "bad interpreter" or syntax error.
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+# Read by the JVM and by Python on both platforms.
+*.avsc      text eol=lf
+*.py        text eol=lf
+
+# Windows-native scripts keep their native endings.
+*.bat       text eol=crlf
+*.ps1       text eol=crlf
+
+# Never normalise these.
+*.pdf       binary
+*.png       binary
