@@ -1,0 +1,43 @@
+{
+  "type": "record",
+  "name": "OrderAggregate",
+  "namespace": "lk.ac.uor.ee8202.orders",
+  "doc": "A snapshot of the consumer's real-time running average, emitted continuously.",
+  "fields": [
+    {
+      "name": "scope",
+      "type": "string",
+      "doc": "\"ALL\" for the global aggregate, otherwise the product name."
+    },
+    {
+      "name": "count",
+      "type": "long",
+      "doc": "Number of successfully processed orders included in this snapshot."
+    },
+    {
+      "name": "averagePrice",
+      "type": "double",
+      "doc": "Running mean price, maintained with Welford's online algorithm."
+    },
+    {
+      "name": "sumPrice",
+      "type": "double",
+      "doc": "Running total price (derived as averagePrice * count)."
+    },
+    {
+      "name": "minPrice",
+      "type": "double",
+      "doc": "Smallest price seen in this scope."
+    },
+    {
+      "name": "maxPrice",
+      "type": "double",
+      "doc": "Largest price seen in this scope."
+    },
+    {
+      "name": "emittedAt",
+      "type": {"type": "long", "logicalType": "timestamp-millis"},
+      "doc": "Wall-clock time the snapshot was emitted."
+    }
+  ]
+}
