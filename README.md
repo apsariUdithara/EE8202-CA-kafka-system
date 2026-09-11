@@ -13,6 +13,45 @@ can never succeed.
   </picture>
 </p>
 
+## How it works, in plain English
+
+Think of an online shop. Every purchase creates an **order**: an ID, a product and a
+price. This project passes those orders through Kafka and keeps a live average of the
+prices.
+
+Read the diagram above from left to right. **Teal** means an order was processed,
+**red** means it failed, and **amber** means it is being retried.
+
+1. **The producer** plays the shop. It creates orders and puts them on the `orders`
+   *topic* — think of a conveyor belt that also keeps a record of everything that has
+   passed along it. Each order is packed in **Avro**, a compact format that follows a
+   fixed template. The template is stored in the **Schema Registry**, so everyone who
+   reads an order unpacks it the same way.
+2. **The consumer** takes orders off the belt one at a time and puts each through four
+   steps: unpack it, check it, hand it to the next system, and count it.
+3. **A good order** updates the running average.
+4. **An order that can never work** — scrambled bytes, or a negative price — goes
+   straight to a separate belt, the **dead letter queue**, with a note saying what was
+   wrong.
+5. **An order that failed for a temporary reason** — the next system was briefly
+   down — is **retried**, with a longer pause before each attempt. If it keeps
+   failing, it is dead-lettered too.
+
+The producer mixes in bad orders on purpose, so that every one of these paths can be
+seen working. [Section 5](#5-scenarios-step-by-step) walks through each path with a
+diagram, and the [glossary](#10-glossary) explains the Kafka terms.
+
+**Contents** — [Requirements](#1-requirements) ·
+[Quick start](#2-quick-start) ·
+[What you will see](#3-what-you-will-see) ·
+[Requirement mapping](#4-how-each-assignment-requirement-is-met) ·
+[Scenarios](#5-scenarios-step-by-step) ·
+[Configuration](#6-configuration) ·
+[Testing](#7-testing) ·
+[Layout](#8-repository-layout) ·
+[Troubleshooting](#9-troubleshooting) ·
+[Glossary](#10-glossary)
+
 ---
 
 ## 1. Requirements
@@ -78,7 +117,66 @@ Browse the topics, the messages and the registered schemas at **<http://localhos
 | **Live demonstration** | [docs/DEMO.md](docs/DEMO.md) | A scripted walk-through with the exact commands and what to point at. |
 | **Git repository** | this repo | Conventional commits, CI on every push, no generated artefacts committed. |
 
-## 5. Failure handling in detail
+## 5. Scenarios, step by step
+
+Each diagram follows one order through the system, top to bottom. The columns are the programs and topics involved; the arrows are messages passing between them.
+
+### Scenario 1 — a good order
+
+The order is unpacked, checked, handed to the next system and counted, so the running average moves. Only then is its offset stored, marking it done. Every ten orders, or every five seconds, the current average is also published to `orders.aggregates`.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/scenario-1-happy-path-dark.svg">
+    <img src="docs/images/scenario-1-happy-path-light.svg" width="100%" alt="The order is unpacked, checked, handed to the next system and counted, so the running average moves. Only then is its offset stored, marking it done. Every ten orders, or every five seconds, the current average is also published to orders.aggregates.">
+  </picture>
+</p>
+
+### Scenario 2 — a temporary failure is retried
+
+The next system is briefly unavailable. The consumer waits and tries again, doubling the pause each time, with a little randomness so that many retries do not all land at once. When delivery succeeds, the order is counted exactly once.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/scenario-2-retry-dark.svg">
+    <img src="docs/images/scenario-2-retry-light.svg" width="100%" alt="The next system is briefly unavailable. The consumer waits and tries again, doubling the pause each time, with a little randomness so that many retries do not all land at once. When delivery succeeds, the order is counted exactly once.">
+  </picture>
+</p>
+
+### Scenario 3 — a bad order skips the retries
+
+Bytes that are not Avro, or a price below zero, can never succeed, however many times they are tried. Retrying would only hold up the orders queued behind it, so the message goes straight to the dead letter queue, untouched, with the reason recorded alongside it.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/scenario-3-bad-order-dark.svg">
+    <img src="docs/images/scenario-3-bad-order-light.svg" width="100%" alt="Bytes that are not Avro, or a price below zero, can never succeed, however many times they are tried. Retrying would only hold up the orders queued behind it, so the message goes straight to the dead letter queue, untouched, with the reason recorded alongside it.">
+  </picture>
+</p>
+
+### Scenario 4 — the retries run out
+
+If the next system stays down, the consumer gives up after four attempts and dead-letters the order with the reason `RETRY_EXHAUSTED`. A failed order is never counted in the average.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/scenario-4-retries-exhausted-dark.svg">
+    <img src="docs/images/scenario-4-retries-exhausted-light.svg" width="100%" alt="If the next system stays down, the consumer gives up after four attempts and dead-letters the order with the reason RETRY_EXHAUSTED. A failed order is never counted in the average.">
+  </picture>
+</p>
+
+### Scenario 5 — a crash loses nothing
+
+An order is only marked done once the consumer has finished with it. After a crash, the consumer picks up from the last position it saved: nothing is lost, although the last few orders may be processed a second time. This guarantee is called *at-least-once* delivery.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/scenario-5-crash-resume-dark.svg">
+    <img src="docs/images/scenario-5-crash-resume-light.svg" width="100%" alt="An order is only marked done once the consumer has finished with it. After a crash, the consumer picks up from the last position it saved: nothing is lost, although the last few orders may be processed a second time. This guarantee is called at-least-once delivery.">
+  </picture>
+</p>
+
+### Failure handling at a glance
 
 Every failure is classified before anything else happens, because the classification —
 not the exception type from some library — decides what the consumer does:
@@ -164,6 +262,7 @@ mypy
 │       └── dlq_inspector.py    order-dlq
 ├── tests/                      unit tests (no broker needed)
 └── docs/
+    ├── images/                 architecture and scenario diagrams (SVG)
     ├── assignment.pdf          the brief
     ├── ARCHITECTURE.md         design decisions and trade-offs
     └── DEMO.md                 the live demonstration script
@@ -177,3 +276,21 @@ mypy
 | `Topic orders not present in metadata` | topic creation failed: `docker compose logs kafka-init` |
 | Schema Registry 404s | it starts after Kafka; wait for `docker compose ps` to show it `healthy` |
 | Consumer sits idle | it is at the end of the topic — start the producer, or restart with `--group fresh-$RANDOM` to re-read from the beginning |
+
+## 10. Glossary
+
+| Term | In plain words |
+|---|---|
+| **Producer** | The program that writes messages. Here it plays the shop, creating orders. |
+| **Consumer** | The program that reads messages and does something with them. |
+| **Topic** | A named, ordered list of messages that Kafka stores, like a conveyor belt that keeps a record. |
+| **Partition** | A topic is split into lanes so the work can be shared out. `orders` has three. Messages stay in order within a lane. |
+| **Offset** | A message's position in its lane. The consumer saves the offset it has finished up to, so it knows where to carry on. |
+| **Consumer lag** | How many messages are waiting to be read. |
+| **Avro** | A compact binary format that follows a strict template, used here instead of JSON. |
+| **Schema / Schema Registry** | The template for a message, and the service that stores templates and gives each one an ID. |
+| **Transient failure** | A failure that may go away if you try again, such as a timeout. |
+| **Permanent failure** | A failure that never will, such as a negative price. |
+| **Backoff** | Waiting a little longer before each new attempt, so a struggling system gets room to recover. |
+| **Dead letter queue (DLQ)** | Where messages that cannot be processed are parked, with the reason, so they can be inspected and replayed later. |
+| **At-least-once** | Nothing is ever lost. The trade-off is that, after a crash, a message may occasionally be processed twice. |

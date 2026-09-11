@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 708" width="960" height="708" role="img" aria-labelledby="t d">
+<title id="t">Scenario 2: A temporary failure is retried</title>
+<desc id="d">The downstream system is briefly unavailable. The consumer waits and tries again, doubling the pause each time. When delivery finally succeeds, the order is counted in the average exactly once.</desc>
+<defs>
+<marker id="m-flow-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C9D1D9"/></marker>
+<marker id="m-teal-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3FC1A5"/></marker>
+<marker id="m-red-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#F0776A"/></marker>
+<marker id="m-amber-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E3A33B"/></marker>
+</defs>
+<rect x="0.8" y="0.8" width="958.5" height="706.5" rx="14" fill="#0D1117" stroke="#30363D" stroke-width="1.2"/>
+<text x="24.0" y="34.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="11.5" font-weight="600" fill="#9DA7B3" text-anchor="start" letter-spacing="1.2">SCENARIO 2</text>
+<text x="24.0" y="58.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#E6EDF3" text-anchor="start">A temporary failure is retried</text>
+<line x1="176.0" y1="130" x2="176.0" y2="686" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="88.0" y="80.0" width="176.0" height="50.0" rx="9" fill="#161B22" stroke="#6E7681" stroke-width="1.2"/>
+<text x="176.0" y="102.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">orders</text>
+<text x="176.0" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">3 partitions</text>
+<line x1="480.0" y1="130" x2="480.0" y2="686" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="392.0" y="80.0" width="176.0" height="50.0" rx="9" fill="#161B22" stroke="#30363D" stroke-width="1.2"/>
+<text x="480.0" y="102.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">Consumer</text>
+<text x="480.0" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">order-consumer</text>
+<line x1="784.0" y1="130" x2="784.0" y2="686" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="696.0" y="80.0" width="176.0" height="50.0" rx="9" fill="#161B22" stroke="#6E7681" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="784.0" y="102.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">Downstream</text>
+<text x="784.0" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">simulated · can fail</text>
+<path d="M180.0,176 H474.0" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="285.2" y="154.0" width="85.5" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="328.0" y="168.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">order 1005</text>
+<rect x="387.4" y="188.0" width="185.3" height="28.0" rx="7" fill="#161B22" stroke="#30363D" stroke-width="1.1"/>
+<text x="480.0" y="206.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">decode ✓    validate ✓</text>
+<rect x="346.2" y="230.0" width="571.5" height="396.0" rx="8" fill="none" stroke="#E3A33B" stroke-width="1.3" stroke-dasharray="6 4"/>
+<path d="M346.2,238.0 q0,-8 8,-8 H733.4 v14 l-8,8 H346.2 z" fill="#2A2012" stroke="#E3A33B" stroke-width="1.1"/>
+<text x="356.2" y="246.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="11.5" font-weight="700" fill="#E3A33B" text-anchor="start">loop</text>
+<text x="392.2" y="246.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#E6EDF3" text-anchor="start">retry: up to 4 attempts, the pause doubles each time</text>
+<path d="M484.0,298 H778.0" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="557.1" y="276.0" width="149.9" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="290.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">deliver · attempt 1</text>
+<path d="M780.0,344 H486.0" stroke="#E3A33B" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#m-amber-dark)"/>
+<rect x="571.4" y="322.0" width="121.3" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="336.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E3A33B" text-anchor="middle">503 · temporary</text>
+<rect x="423.1" y="356.0" width="113.8" height="28.0" rx="7" fill="#2A2012" stroke="#E3A33B" stroke-width="1.1"/>
+<text x="480.0" y="374.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">wait ≈ 0.2 s</text>
+<path d="M484.0,432 H778.0" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="592.8" y="410.0" width="78.4" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="424.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">attempt 2</text>
+<path d="M780.0,478 H486.0" stroke="#E3A33B" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#m-amber-dark)"/>
+<rect x="557.1" y="456.0" width="149.9" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="470.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E3A33B" text-anchor="middle">timeout · temporary</text>
+<rect x="423.1" y="490.0" width="113.8" height="28.0" rx="7" fill="#2A2012" stroke="#E3A33B" stroke-width="1.1"/>
+<text x="480.0" y="508.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">wait ≈ 0.4 s</text>
+<path d="M484.0,566 H778.0" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="592.8" y="544.0" width="78.4" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="558.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">attempt 3</text>
+<path d="M780.0,612 H486.0" stroke="#3FC1A5" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#m-teal-dark)"/>
+<rect x="617.9" y="590.0" width="28.3" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="632.0" y="604.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#3FC1A5" text-anchor="middle">ok</text>
+<rect x="315.9" y="638.0" width="328.3" height="28.0" rx="7" fill="#0F2620" stroke="#3FC1A5" stroke-width="1.1"/>
+<text x="480.0" y="656.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">counted in the average once · attempts = 3</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 526" width="960" height="526" role="img" aria-labelledby="t d">
+<title id="t">Scenario 1: A good order</title>
+<desc id="d">The order is unpacked, checked, handed to the downstream system and counted, so the running average moves. The offset is then stored, and every so often the current average is published to orders.aggregates.</desc>
+<defs>
+<marker id="m-flow-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#C9D1D9"/></marker>
+<marker id="m-teal-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3FC1A5"/></marker>
+<marker id="m-red-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#F0776A"/></marker>
+<marker id="m-amber-dark" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E3A33B"/></marker>
+</defs>
+<rect x="0.8" y="0.8" width="958.5" height="524.5" rx="14" fill="#0D1117" stroke="#30363D" stroke-width="1.2"/>
+<text x="24.0" y="34.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="11.5" font-weight="600" fill="#9DA7B3" text-anchor="start" letter-spacing="1.2">SCENARIO 1</text>
+<text x="24.0" y="58.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#E6EDF3" text-anchor="start">A good order</text>
+<line x1="115.2" y1="130" x2="115.2" y2="504" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="34.0" y="80.0" width="162.4" height="50.0" rx="9" fill="#161B22" stroke="#30363D" stroke-width="1.2"/>
+<text x="115.2" y="102.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">Producer</text>
+<text x="115.2" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">order-producer</text>
+<line x1="297.6" y1="130" x2="297.6" y2="504" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="216.4" y="80.0" width="162.4" height="50.0" rx="9" fill="#161B22" stroke="#6E7681" stroke-width="1.2"/>
+<text x="297.6" y="102.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">orders</text>
+<text x="297.6" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">3 partitions</text>
+<line x1="480.0" y1="130" x2="480.0" y2="504" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="398.8" y="80.0" width="162.4" height="50.0" rx="9" fill="#161B22" stroke="#30363D" stroke-width="1.2"/>
+<text x="480.0" y="102.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">Consumer</text>
+<text x="480.0" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">order-consumer</text>
+<line x1="662.4" y1="130" x2="662.4" y2="504" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="581.2" y="80.0" width="162.4" height="50.0" rx="9" fill="#161B22" stroke="#6E7681" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="662.4" y="102.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">Downstream</text>
+<text x="662.4" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">simulated · can fail</text>
+<line x1="844.8" y1="130" x2="844.8" y2="504" stroke="#30363D" stroke-width="1.4" stroke-dasharray="4 5"/>
+<rect x="763.6" y="80.0" width="162.4" height="50.0" rx="9" fill="#0F2620" stroke="#3FC1A5" stroke-width="1.2"/>
+<text x="844.8" y="102.0" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="14.5" font-weight="700" fill="#E6EDF3" text-anchor="middle">orders.aggregates</text>
+<text x="844.8" y="120.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#9DA7B3" text-anchor="middle">running average</text>
+<path d="M119.2,176 H291.6" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="74.3" y="154.0" width="264.2" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="206.4" y="168.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">order 1004 · Item3 · 317.44  (Avro)</text>
+<path d="M301.6,222 H474.0" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="367.5" y="200.0" width="42.6" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="388.8" y="214.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">poll</text>
+<rect x="387.4" y="234.0" width="185.3" height="28.0" rx="7" fill="#161B22" stroke="#30363D" stroke-width="1.1"/>
+<text x="480.0" y="252.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">decode ✓    validate ✓</text>
+<path d="M484.0,310 H656.4" stroke="#C9D1D9" stroke-width="2" fill="none" marker-end="url(#m-flow-dark)"/>
+<rect x="539.2" y="288.0" width="64.1" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="571.2" y="302.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">deliver</text>
+<path d="M658.4,356 H486.0" stroke="#3FC1A5" stroke-width="2" fill="none" stroke-dasharray="6 5" marker-end="url(#m-teal-dark)"/>
+<rect x="557.1" y="334.0" width="28.3" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="571.2" y="348.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#3FC1A5" text-anchor="middle">ok</text>
+<rect x="355.2" y="368.0" width="249.7" height="28.0" rx="7" fill="#0F2620" stroke="#3FC1A5" stroke-width="1.1"/>
+<text x="480.0" y="386.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">running avg = 221.87 over n = 4</text>
+<rect x="348.0" y="410.0" width="264.0" height="28.0" rx="7" fill="#161B22" stroke="#30363D" stroke-width="1.1"/>
+<text x="480.0" y="428.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#E6EDF3" text-anchor="middle">offset stored: this order is done</text>
+<path d="M484.0,486 H838.8" stroke="#3FC1A5" stroke-width="2" fill="none" marker-end="url(#m-teal-dark)"/>
+<rect x="537.4" y="464.0" width="250.0" height="19.0" rx="4" fill="#0D1117" stroke="none" stroke-width="1.2"/>
+<text x="662.4" y="478.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#3FC1A5" text-anchor="middle">snapshot · every 10 orders or 5 s</text>
+</svg>
