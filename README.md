@@ -13,7 +13,7 @@ can never succeed.
   </picture>
 </p>
 
-## How it works, in plain English
+## How it works
 
 Think of an online shop. Every purchase creates an **order**: an ID, a product and a
 price. This project passes those orders through Kafka and keeps a live average of the
