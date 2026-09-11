@@ -5,31 +5,13 @@ A Kafka-based system that produces and consumes **order messages** serialised wi
 **retry logic** for temporary failures, and a **Dead Letter Queue** for messages that
 can never succeed.
 
-```
-                                    ┌──────────────────────────┐
-                                    │     Schema Registry      │
-                                    │  order.avsc (subject     │
-                                    │  "orders-value")         │
-                                    └───────┬──────────┬───────┘
-                            register schema │          │ resolve schema id
-                                            │          │
-┌───────────────┐   Avro bytes   ┌──────────┴───┐  ┌───┴────────────────────┐
-│   producer    │──────────────▶ │ topic:orders │─▶│       consumer         │
-│               │                │ 3 partitions │  │                        │
-│ • valid       │                └──────────────┘  │ 1. decode  ──fail──┐   │
-│ • invalid  ⚠  │                                  │ 2. validate ─fail──┤   │
-│ • corrupt  ⚠  │                                  │ 3. deliver         │   │
-└───────────────┘                                  │    └ retry ×N      │   │
-                                                   │      exhausted ────┤   │
-                                                   │ 4. aggregate       │   │
-                                                   └──────┬─────────────┼───┘
-                                                          │             │
-                                       ┌──────────────────▼──┐   ┌──────▼──────────┐
-                                       │ topic:              │   │ topic:          │
-                                       │ orders.aggregates   │   │ orders.DLQ      │
-                                       │ running average     │   │ + why it failed │
-                                       └─────────────────────┘   └─────────────────┘
-```
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/architecture-dark.svg">
+    <img src="docs/images/architecture-light.svg" width="100%"
+         alt="Architecture: the producer publishes Avro-serialised orders to the orders topic and registers the schema with the Schema Registry. The consumer decodes, validates, delivers with retries and aggregates each order, publishing running-average snapshots to orders.aggregates and routing every failure, with its original bytes, to orders.DLQ.">
+  </picture>
+</p>
 
 ---
 
