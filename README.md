@@ -114,7 +114,7 @@ Browse the topics, the messages and the registered schemas at **<http://localhos
 | **Real-time aggregation** | [aggregation.py](src/order_pipeline/aggregation.py) | A running average maintained per message with **Welford's online algorithm** — O(1) memory, numerically stable over a long stream. Global *and* per-product, logged live and published to `orders.aggregates`. |
 | **Retry logic** | [retry.py](src/order_pipeline/retry.py), [processing.py](src/order_pipeline/processing.py) | Bounded **exponential backoff with jitter**. Only *transient* errors are retried; permanent ones fail fast so they cannot block the partition. |
 | **Dead Letter Queue** | [dlq.py](src/order_pipeline/dlq.py) | Failed messages are copied to `orders.DLQ` **byte-for-byte**, with the failure reason, error class, message, attempt count and origin coordinates in Kafka headers. |
-| **Live demonstration** | [docs/DEMO.md](docs/DEMO.md) | A scripted walk-through with the exact commands and what to point at. |
+| **Live demonstration** | [§2 Quick start](#2-quick-start) | The whole stack starts with one command, and the recorded demonstration runs the producer, the consumer and the DLQ inspector against a live broker. |
 | **Git repository** | this repo | Conventional commits, CI on every push, no generated artefacts committed. |
 
 ## 5. Scenarios, step by step
@@ -264,8 +264,7 @@ mypy
 └── docs/
     ├── images/                 architecture and scenario diagrams (SVG)
     ├── assignment.pdf          the brief
-    ├── ARCHITECTURE.md         design decisions and trade-offs
-    └── DEMO.md                 the live demonstration script
+    └── ARCHITECTURE.md         design decisions and trade-offs
 ```
 
 ## 9. Troubleshooting
