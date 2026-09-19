@@ -1,4 +1,4 @@
-# EE8202 — Kafka Order Pipeline
+# EE8202 - Kafka Order Pipeline
 
 A Kafka-based system that produces and consumes **order messages** serialised with
 **Avro**, and that supports **real-time aggregation** (a running average of prices),
