@@ -23,25 +23,25 @@ Read the diagram above from left to right. **Teal** means an order was processed
 **red** means it failed, and **amber** means it is being retried.
 
 1. **The producer** plays the shop. It creates orders and puts them on the `orders`
-   *topic* — think of a conveyor belt that also keeps a record of everything that has
+   *topic* - think of a conveyor belt that also keeps a record of everything that has
    passed along it. Each order is packed in **Avro**, a compact format that follows a
    fixed template. The template is stored in the **Schema Registry**, so everyone who
    reads an order unpacks it the same way.
 2. **The consumer** takes orders off the belt one at a time and puts each through four
    steps: unpack it, check it, hand it to the next system, and count it.
 3. **A good order** updates the running average.
-4. **An order that can never work** — scrambled bytes, or a negative price — goes
+4. **An order that can never work** - scrambled bytes, or a negative price - goes
    straight to a separate belt, the **dead letter queue**, with a note saying what was
    wrong.
-5. **An order that failed for a temporary reason** — the next system was briefly
-   down — is **retried**, with a longer pause before each attempt. If it keeps
+5. **An order that failed for a temporary reason** - the next system was briefly
+   down - is **retried**, with a longer pause before each attempt. If it keeps
    failing, it is dead-lettered too.
 
 The producer mixes in bad orders on purpose, so that every one of these paths can be
 seen working. [Section 5](#5-scenarios-step-by-step) walks through each path with a
 diagram, and the [glossary](#10-glossary) explains the Kafka terms.
 
-**Contents** — [Requirements](#1-requirements) ·
+**Contents** - [Requirements](#1-requirements) ·
 [Quick start](#2-quick-start) ·
 [What you will see](#3-what-you-will-see) ·
 [Requirement mapping](#4-how-each-assignment-requirement-is-met) ·
@@ -61,7 +61,7 @@ diagram, and the [glossary](#10-glossary) explains the Kafka terms.
 | Docker Desktop | 4.x with Compose v2 | runs Kafka, Schema Registry and Kafka UI |
 | Python | 3.11 or newer | the producer and consumer |
 
-Nothing else needs installing — no local Kafka, no ZooKeeper (the broker runs in KRaft mode).
+Nothing else needs installing - no local Kafka, no ZooKeeper (the broker runs in KRaft mode).
 
 ## 2. Quick start
 
@@ -75,13 +75,13 @@ python -m venv .venv
                                 # macOS / Linux:      source .venv/bin/activate
 pip install -e ".[dev]"
 
-# 3. Terminal A — start the consumer
+# 3. Terminal A - start the consumer
 order-consumer
 
-# 4. Terminal B — start the producer
+# 4. Terminal B - start the producer
 order-producer --rate 2
 
-# 5. Terminal C — see what failed permanently
+# 5. Terminal C - see what failed permanently
 order-dlq
 ```
 
@@ -111,7 +111,7 @@ Browse the topics, the messages and the registered schemas at **<http://localhos
 | Requirement | Where it lives | How |
 |---|---|---|
 | **Avro serialisation** | [schemas/order.avsc](schemas/order.avsc), [serdes.py](src/order_pipeline/serdes.py) | Confluent `AvroSerializer` / `AvroDeserializer` against the Schema Registry. The `.avsc` file is read at runtime, so the registered schema can never drift from the submitted file. |
-| **Real-time aggregation** | [aggregation.py](src/order_pipeline/aggregation.py) | A running average maintained per message with **Welford's online algorithm** — O(1) memory, numerically stable over a long stream. Global *and* per-product, logged live and published to `orders.aggregates`. |
+| **Real-time aggregation** | [aggregation.py](src/order_pipeline/aggregation.py) | A running average maintained per message with **Welford's online algorithm** - O(1) memory, numerically stable over a long stream. Global *and* per-product, logged live and published to `orders.aggregates`. |
 | **Retry logic** | [retry.py](src/order_pipeline/retry.py), [processing.py](src/order_pipeline/processing.py) | Bounded **exponential backoff with jitter**. Only *transient* errors are retried; permanent ones fail fast so they cannot block the partition. |
 | **Dead Letter Queue** | [dlq.py](src/order_pipeline/dlq.py) | Failed messages are copied to `orders.DLQ` **byte-for-byte**, with the failure reason, error class, message, attempt count and origin coordinates in Kafka headers. |
 | **Live demonstration** | [§2 Quick start](#2-quick-start) | The whole stack starts with one command, and the recorded demonstration runs the producer, the consumer and the DLQ inspector against a live broker. |
@@ -121,7 +121,7 @@ Browse the topics, the messages and the registered schemas at **<http://localhos
 
 Each diagram follows one order through the system, top to bottom. The columns are the programs and topics involved; the arrows are messages passing between them.
 
-### Scenario 1 — a good order
+### Scenario 1 - a good order
 
 The order is unpacked, checked, handed to the next system and counted, so the running average moves. Only then is its offset stored, marking it done. Every ten orders, or every five seconds, the current average is also published to `orders.aggregates`.
 
@@ -132,7 +132,7 @@ The order is unpacked, checked, handed to the next system and counted, so the ru
   </picture>
 </p>
 
-### Scenario 2 — a temporary failure is retried
+### Scenario 2 - a temporary failure is retried
 
 The next system is briefly unavailable. The consumer waits and tries again, doubling the pause each time, with a little randomness so that many retries do not all land at once. When delivery succeeds, the order is counted exactly once.
 
@@ -143,7 +143,7 @@ The next system is briefly unavailable. The consumer waits and tries again, doub
   </picture>
 </p>
 
-### Scenario 3 — a bad order skips the retries
+### Scenario 3 - a bad order skips the retries
 
 Bytes that are not Avro, or a price below zero, can never succeed, however many times they are tried. Retrying would only hold up the orders queued behind it, so the message goes straight to the dead letter queue, untouched, with the reason recorded alongside it.
 
@@ -154,7 +154,7 @@ Bytes that are not Avro, or a price below zero, can never succeed, however many 
   </picture>
 </p>
 
-### Scenario 4 — the retries run out
+### Scenario 4 - the retries run out
 
 If the next system stays down, the consumer gives up after four attempts and dead-letters the order with the reason `RETRY_EXHAUSTED`. A failed order is never counted in the average.
 
@@ -165,7 +165,7 @@ If the next system stays down, the consumer gives up after four attempts and dea
   </picture>
 </p>
 
-### Scenario 5 — a crash loses nothing
+### Scenario 5 - a crash loses nothing
 
 An order is only marked done once the consumer has finished with it. After a crash, the consumer picks up from the last position it saved: nothing is lost, although the last few orders may be processed a second time. This guarantee is called *at-least-once* delivery.
 
@@ -178,26 +178,26 @@ An order is only marked done once the consumer has finished with it. After a cra
 
 ### Failure handling at a glance
 
-Every failure is classified before anything else happens, because the classification —
-not the exception type from some library — decides what the consumer does:
+Every failure is classified before anything else happens, because the classification -
+not the exception type from some library - decides what the consumer does:
 
 | Failure | Example | Retried? | Ends up |
 |---|---|---|---|
-| `DeserializationError` | corrupt bytes, unknown schema id | **No** — the bytes on disk will not change | `orders.DLQ`, reason `DESERIALIZATION_FAILURE` |
-| `ValidationError` | negative price, blank `orderId` | **No** — retrying cannot fix bad data | `orders.DLQ`, reason `VALIDATION_FAILURE` |
+| `DeserializationError` | corrupt bytes, unknown schema id | **No** - the bytes on disk will not change | `orders.DLQ`, reason `DESERIALIZATION_FAILURE` |
+| `ValidationError` | negative price, blank `orderId` | **No** - retrying cannot fix bad data | `orders.DLQ`, reason `VALIDATION_FAILURE` |
 | `TransientProcessingError` | downstream timeout / 503 | **Yes**, up to `CONSUMER_MAX_RETRY_ATTEMPTS` | processed, or `orders.DLQ` with reason `RETRY_EXHAUSTED` |
 
 Two details that matter:
 
 * **The DLQ write is flushed before the offset advances.** A message is only
-  acknowledged once it is safely *somewhere* — processed or dead-lettered.
+  acknowledged once it is safely *somewhere* - processed or dead-lettered.
 * **Offsets are stored manually** (`enable.auto.offset.store=false`), giving
   at-least-once semantics: a crash mid-message replays it rather than losing it.
 
 ### Replaying a dead letter
 
 Because the DLQ payload is byte-identical to the original, a fixed message can be
-replayed by copying its value straight back to `orders` — no re-encoding needed.
+replayed by copying its value straight back to `orders` - no re-encoding needed.
 Inspect the queue first:
 
 ```bash
@@ -220,7 +220,7 @@ environment variable directly. The most useful ones:
 | `CONSUMER_MAX_RETRY_ATTEMPTS` | `4` | total attempts per message, including the first |
 | `CONSUMER_TRANSIENT_FAILURE_RATE` | `0.15` | simulated flakiness of the downstream sink |
 
-All of these are also available as CLI flags — run any command with `--help`.
+All of these are also available as CLI flags - run any command with `--help`.
 
 ## 7. Testing
 
@@ -242,7 +242,7 @@ mypy
 ├── docker-compose.yml          Kafka (KRaft) + Schema Registry + Kafka UI + topic init
 ├── Dockerfile                  multi-stage image for the producer/consumer
 ├── schemas/
-│   ├── order.avsc              the assignment schema — orderId, product, price
+│   ├── order.avsc              the assignment schema - orderId, product, price
 │   └── order_aggregate.avsc    running-average snapshots
 ├── scripts/create-topics.sh    explicit topic creation (auto-create is off)
 ├── src/order_pipeline/
@@ -271,10 +271,10 @@ mypy
 
 | Symptom | Fix |
 |---|---|
-| `Connection refused` on `localhost:29092` | the broker is still starting — `docker compose ps` should show `kafka` as `healthy` |
+| `Connection refused` on `localhost:29092` | the broker is still starting - `docker compose ps` should show `kafka` as `healthy` |
 | `Topic orders not present in metadata` | topic creation failed: `docker compose logs kafka-init` |
 | Schema Registry 404s | it starts after Kafka; wait for `docker compose ps` to show it `healthy` |
-| Consumer sits idle | it is at the end of the topic — start the producer, or restart with `--group fresh-$RANDOM` to re-read from the beginning |
+| Consumer sits idle | it is at the end of the topic - start the producer, or restart with `--group fresh-$RANDOM` to re-read from the beginning |
 
 ## 10. Glossary
 
